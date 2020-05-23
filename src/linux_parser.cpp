@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <iomanip>
 
 #include "linux_parser.h"
 
@@ -113,7 +114,33 @@ long LinuxParser::Jiffies() {
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { 
+  string line; 
+  string value;
+  float jiffies {0}; 
+  float seconds, uptime, starttime; 
+
+  std::ifstream filestream(kProcDirectory + to_string(pid) + kStatFilename); 
+  if (filestream.is_open()) {
+    std::getline(filestream, line); 
+    std::istringstream linestream(line); 
+    for (int idx = 0; idx < 22; idx++) {
+      linestream >> value; 
+      if (idx == 0) {
+        uptime = std::stof(value); 
+      }
+      else if (idx >= 13 && idx <= 16) {
+        jiffies += std::stof(value); 
+      }
+      else if (idx == 21) {
+        starttime = std::stof(value); 
+      }
+    }
+  }
+
+  seconds = uptime - starttime/sysconf(_SC_CLK_TCK);
+  return (jiffies /sysconf(_SC_CLK_TCK)) / seconds; 
+}
 
 // TODO: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { 
@@ -209,19 +236,25 @@ string LinuxParser::Command(int pid) {
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) { 
-  string line, key, value; 
+  string line, key, value;
+  float memmb; 
+
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
       std::istringstream linestream(line); 
       while (linestream >> key >> value) {
         if (key == "VmSize:") {
-          return value; 
+          break; 
         }
       }
     }
   }
-  return string(); 
+
+  memmb = stof(value) / 1000;
+  std::stringstream mem;
+  mem << std::fixed << std::setprecision(1) << memmb; 
+  return mem.str(); 
 }
 
 // TODO: Read and return the user ID associated with a process
