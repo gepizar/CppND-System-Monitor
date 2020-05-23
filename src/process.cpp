@@ -16,6 +16,7 @@ Process::Process(int pid) : pid_(pid) {
     command_ = LinuxParser::Command(pid_);
     ram_ = LinuxParser::Ram(pid_); 
     uptime_ = LinuxParser::UpTime(pid_); 
+    // Average cpu utilization of the process.
     cpuutilization_ = LinuxParser::CpuUtilization(pid_);
 }
 // TODO: Return this process's ID
@@ -38,4 +39,6 @@ long int Process::UpTime() { return uptime_; }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+bool Process::operator<(Process const& a) const { 
+    return std::stof(ram_) < std::stof(a.ram_);
+}

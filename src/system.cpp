@@ -22,11 +22,11 @@ vector<Process>& System::Processes() {
     vector<int> pid_list = LinuxParser::Pids();
     processes_.clear(); 
     for (uint idx=0; idx < pid_list.size(); idx++) {
-        Process process(pid_list[pid_list.size() -1-idx]);
+        Process process(pid_list[idx]);
         processes_.push_back(process); 
     }
-
-    return processes_; 
+    std::sort(processes_.rbegin(), processes_.rend());
+    return processes_;
 }
 
 // TODO: Return the system's kernel identifier (string)
