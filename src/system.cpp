@@ -22,10 +22,9 @@ vector<Process>& System::Processes() {
     vector<int> pid_list = LinuxParser::Pids();
     processes_.clear(); 
     for (uint idx=0; idx < pid_list.size(); idx++) {
-        Process process(pid_list[idx]);
-        processes_.push_back(process);
-        
-    } 
+        Process process(pid_list[pid_list.size() -1-idx]);
+        processes_.push_back(process); 
+    }
 
     return processes_; 
 }

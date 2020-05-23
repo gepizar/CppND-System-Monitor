@@ -16,12 +16,13 @@ Process::Process(int pid) : pid_(pid) {
     command_ = LinuxParser::Command(pid_);
     ram_ = LinuxParser::Ram(pid_); 
     uptime_ = LinuxParser::UpTime(pid_); 
+    cpuutilization_ = LinuxParser::CpuUtilization(pid_);
 }
 // TODO: Return this process's ID
 int Process::Pid() { return pid_; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+float Process::CpuUtilization() { return cpuutilization_; }
 
 // TODO: Return the command that generated this process
 string Process::Command() { return command_; }
