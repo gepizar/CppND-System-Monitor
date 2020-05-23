@@ -240,13 +240,13 @@ string LinuxParser::Command(int pid) {
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) { 
   string line, key, value;
-  float memmb; 
+  float memmb, memkb; 
 
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
       std::istringstream linestream(line); 
-      while (linestream >> key >> value) {
+      while (linestream >> key >> memkb) {
         if (key == "VmSize:") {
           break; 
         }
@@ -254,7 +254,7 @@ string LinuxParser::Ram(int pid) {
     }
   }
 
-  memmb = stof(value) / 1000;
+  memmb = memkb / 1000;
   std::stringstream mem;
   mem << std::fixed << std::setprecision(1) << memmb; 
   return mem.str(); 
