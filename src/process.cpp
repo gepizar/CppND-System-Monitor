@@ -17,7 +17,7 @@ Process::Process(int pid) : pid_(pid) {
     ram_ = LinuxParser::Ram(pid_); 
     uptime_ = LinuxParser::UpTime(pid_); 
     // Average cpu utilization of the process.
-    cpuutilization_ = LinuxParser::CpuUtilization(pid_);
+    cpuutilization_ = (float)LinuxParser::ActiveJiffies(pid_) / LinuxParser::Jiffies(); 
 }
 // TODO: Return this process's ID
 int Process::Pid() { return pid_; }

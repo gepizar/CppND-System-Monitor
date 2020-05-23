@@ -114,12 +114,10 @@ long LinuxParser::Jiffies() {
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
-float LinuxParser::CpuUtilization(int pid) { 
+long LinuxParser::ActiveJiffies(int pid) { 
   string line; 
   string value;
-  float jiffies {0}; 
-  float seconds, uptime, starttime, cpu; 
-  float hertz = sysconf(_SC_CLK_TCK);
+  long jiffies {0}; 
 
   std::ifstream filestream(kProcDirectory + to_string(pid) + kStatFilename); 
   if (filestream.is_open()) {
@@ -127,22 +125,13 @@ float LinuxParser::CpuUtilization(int pid) {
     std::istringstream linestream(line); 
     for (int idx = 0; idx < 22; idx++) {
       linestream >> value; 
-      if (idx == 0) {
-        uptime = std::stof(value); 
-      }
-      else if (idx >= 13 && idx <= 16) {
+      if (idx >= 13 && idx <= 16) {
         jiffies += std::stof(value); 
-      }
-      else if (idx == 21) {
-        starttime = std::stof(value); 
       }
     }
   }
   
-  seconds = uptime - (starttime / hertz); 
-  cpu = (jiffies / hertz) / seconds; 
-
-  return cpu; 
+  return jiffies;
 }
 
 // TODO: Read and return the number of active jiffies for the system
